@@ -3,6 +3,7 @@ class CreateUpdateChecks < ActiveRecord::Migration
     create_table :update_checks do |t|
       t.string :tool
       t.string :data
+      t.integer :count
       
       t.timestamps null: false
     end

@@ -27,11 +27,13 @@ class UpdateChecksController < ApplicationController
     unless obj
       obj = UpdateCheck.create(({
         tool: tool,
-        data: []
+        data: [],
+        count: 0
       }))
     end
 
     obj.data << Time.now.to_i
+    obj.count += 1
     obj.save
   end
 end

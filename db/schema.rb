@@ -16,6 +16,7 @@ ActiveRecord::Schema.define(version: 20150322131142) do
   create_table "update_checks", force: :cascade do |t|
     t.string   "tool"
     t.string   "data"
+    t.integer  "count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

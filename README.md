@@ -25,7 +25,7 @@ refresher
 
 `refresher` is being run on [Heroku](https://www.heroku.com/). All [fastlane](https://fastlane.tools) tools check for available updates on each app start.
 
-`refresher` also caches the latest version number for ~5 minutes. The only thing that is stored by `refresher` is a log of the current time. No user specific information is being stored.
+`refresher` also caches the latest version number for ~5 minutes. The only thing that is stored is a log of the current time. No user specific information is being stored.
 
 # License
 This project is licensed under the terms of the MIT license. See the LICENSE file.

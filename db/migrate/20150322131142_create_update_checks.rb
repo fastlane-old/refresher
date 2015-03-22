@@ -1,7 +1,6 @@
 class CreateUpdateChecks < ActiveRecord::Migration
   def change
-    create_table :update_checks, id: false do |t|
-      t.primary_key :tool, :id
+    create_table :update_checks do |t|
       t.string :tool
       t.string :data
       

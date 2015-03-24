@@ -13,27 +13,34 @@ class UpdateChecksController < ApplicationController
     store_entry(tool)
   end
 
-  def fetch_version(tool)
-    Rails.cache.fetch(tool, expires_in: 5.minutes) do
-      JSON.parse(open("https://rubygems.org/api/v1/gems/#{tool}.json").read)["version"]
-    end
-  rescue
-    nil
+  def stats
+    data = {}
+    UpdateCheck.all.each { |t| data[t.tool] = t.count }
+    render json: data
   end
 
-  def store_entry(tool)
-    obj = UpdateCheck.find_by_tool(tool)
-
-    unless obj
-      obj = UpdateCheck.create(({
-        tool: tool,
-        data: [],
-        count: 0
-      }))
+  private
+    def fetch_version(tool)
+      Rails.cache.fetch(tool, expires_in: 5.minutes) do
+        JSON.parse(open("https://rubygems.org/api/v1/gems/#{tool}.json").read)["version"]
+      end
+    rescue
+      nil
     end
 
-    obj.data << Time.now.to_i
-    obj.count += 1
-    obj.save
-  end
+    def store_entry(tool)
+      obj = UpdateCheck.find_by_tool(tool)
+
+      unless obj
+        obj = UpdateCheck.create(({
+          tool: tool,
+          data: [],
+          count: 0
+        }))
+      end
+
+      obj.data << Time.now.to_i
+      obj.count += 1
+      obj.save
+    end
 end

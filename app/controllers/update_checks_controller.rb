@@ -15,7 +15,7 @@ class UpdateChecksController < ApplicationController
 
   def stats
     data = {}
-    UpdateCheck.all.each { |t| data[t.tool] = t.count }
+    UpdateCheck.order(:count).reverse.each { |t| data[t.tool] = t.count }
     render json: data
   end
 

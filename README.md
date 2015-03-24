@@ -27,5 +27,7 @@ refresher
 
 `refresher` also caches the latest version number for ~5 minutes. The only thing that is stored is a log of the current time. No user specific information is being stored.
 
+You can see the generated stats on [https://refresher.fastlane.tools/](https://refresher.fastlane.tools/)
+
 # License
 This project is licensed under the terms of the MIT license. See the LICENSE file.

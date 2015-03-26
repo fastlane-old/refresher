@@ -13,6 +13,59 @@ class UpdateChecksController < ApplicationController
     store_entry(tool)
   end
 
+  def tool_colors
+    {
+      fastlane: "white",
+      deliver: "#E83F1A",
+      snapshot: "#1B7FFB",
+      frameit: "#88C258",
+      pem: "#8F3DE5",
+      sigh: "#1FBCD2",
+      produce: "#FCD648",
+      cert: "#607D8B",
+      codes: "#795548"
+    }
+  end
+
+  def graphs
+    @data = []
+    @days = []
+    start_time = UpdateCheck.order(:created_at).first.created_at - 2.days
+    step = 1.day
+
+    UpdateCheck.all.each do |check|
+      current = {
+        label: check.tool,
+        fillColor: "rgba(220,220,220,0.2)",
+        strokeColor: tool_colors[check.tool.to_sym],
+        pointColor: tool_colors[check.tool.to_sym],
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(220,220,220,1)",
+        data: []
+      }
+
+      current_time = start_time
+      counter = 0
+      @days = []
+      while current_time <= Time.now
+        current[:data][counter] ||= 0
+        @days << current_time.strftime("%d.%m.%Y")
+
+        check["data"].each do |t|
+          if Time.at(t) > current_time and Time.at(t) < (current_time + step)
+            current[:data][counter] += 1
+          end
+        end
+
+        current_time += step
+        counter += 1
+      end
+
+      @data << current
+    end
+  end
+
   def stats
     data = {}
     UpdateCheck.order(:count).reverse.each { |t| data[t.tool] = t.count }

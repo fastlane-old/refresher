@@ -10,7 +10,7 @@ class UpdateChecksController < ApplicationController
     render json: { version: version,
                     status: :ok }
 
-    store_entry(tool)
+    store_entry(tool) if tool_colors.keys.include?tool.to_sym
   end
 
   def tool_colors

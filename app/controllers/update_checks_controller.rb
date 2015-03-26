@@ -71,7 +71,7 @@ class UpdateChecksController < ApplicationController
       new_val = current.dup
       new_data = []
       new_val[:data].each_with_index do |value, i|
-        new_data[i] = value + (new_data.inject(:+) || 0)
+        new_data[i] = value + (new_data[-1] || 0)
       end
       new_val[:data] = new_data
       @cumulative << new_val

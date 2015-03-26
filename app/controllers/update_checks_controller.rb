@@ -30,7 +30,7 @@ class UpdateChecksController < ApplicationController
   def graphs
     @data = []
     @days = []
-    start_time = Time.at(1427068800)
+    start_time = Time.at(1427068800) # the first day
     step = 1.day
 
     UpdateCheck.order(:count).reverse.each do |check|
@@ -63,6 +63,18 @@ class UpdateChecksController < ApplicationController
       end
 
       @data << current
+    end
+
+    # Now generate cumulative graph
+    @cumulative = []
+    @data.each do |current|
+      new_val = current.dup
+      new_data = []
+      new_val[:data].each_with_index do |value, i|
+        new_data[i] = value + (new_data.inject(:+) || 0)
+      end
+      new_val[:data] = new_data
+      @cumulative << new_val
     end
   end
 

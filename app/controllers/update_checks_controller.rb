@@ -30,7 +30,7 @@ class UpdateChecksController < ApplicationController
   def graphs
     @data = []
     @days = []
-    start_time = UpdateCheck.order(:created_at).first.created_at
+    start_time = Time.at(1427068800)
     step = 1.day
 
     UpdateCheck.order(:count).reverse.each do |check|
@@ -48,7 +48,7 @@ class UpdateChecksController < ApplicationController
       current_time = start_time
       counter = 0
       @days = []
-      while current_time <= Time.now + 1.day
+      while current_time <= Time.now
         current[:data][counter] ||= 0
         @days << current_time.strftime("%d.%m.%Y")
 

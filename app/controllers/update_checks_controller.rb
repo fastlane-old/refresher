@@ -48,7 +48,7 @@ class UpdateChecksController < ApplicationController
       current_time = start_time
       counter = 0
       @days = []
-      while current_time <= Time.now
+      while current_time <= Time.now + 1.day
         current[:data][counter] ||= 0
         @days << current_time.strftime("%d.%m.%Y")
 

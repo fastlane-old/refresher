@@ -15,7 +15,7 @@ class UpdateChecksController < ApplicationController
 
   def tool_colors
     {
-      fastlane: "white",
+      fastlane: "black",
       deliver: "#E83F1A",
       snapshot: "#1B7FFB",
       frameit: "#88C258",
@@ -30,10 +30,10 @@ class UpdateChecksController < ApplicationController
   def graphs
     @data = []
     @days = []
-    start_time = UpdateCheck.order(:created_at).first.created_at - 2.days
+    start_time = UpdateCheck.order(:created_at).first.created_at
     step = 1.day
 
-    UpdateCheck.all.each do |check|
+    UpdateCheck.order(:count).reverse.each do |check|
       current = {
         label: check.tool,
         fillColor: "rgba(220,220,220,0.2)",

@@ -27,7 +27,9 @@ refresher
 
 `refresher` also caches the latest version number for ~5 minutes. The only thing that is stored is a log of the current time. No user specific information is being stored.
 
-You can see the generated stats on [https://refresher.fastlane.tools/](https://refresher.fastlane.tools/)
+You can see the generated stats on [https://refresher.fastlane.tools/](https://refresher.fastlane.tools/) and the graphs on [https://refresher.fastlane.tools/graphs](https://refresher.fastlane.tools/graphs).
+
+There is also a Raspberry Pi client, that shows the launches in real time on a LED board on [GitHub](https://github.com/fastlane/fastrockets).
 
 # License
 This project is licensed under the terms of the MIT license. See the LICENSE file.

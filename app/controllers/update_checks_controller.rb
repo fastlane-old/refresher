@@ -94,18 +94,18 @@ class UpdateChecksController < ApplicationController
     end
 
     def store_entry(tool)
-      obj = UpdateCheck.find_by_tool(tool)
+      now = Time.now.to_date + 1.day
+      obj = Bacon.where(tool: tool, launch_date: now).take
 
       unless obj
-        obj = UpdateCheck.create(({
+        obj = Bacon.create(({
           tool: tool,
-          data: [],
-          count: 0
+          launches: 0,
+          launch_date: now
         }))
       end
 
-      obj.data << Time.now.to_i
-      obj.count += 1
+      obj.launches += 1
       obj.save
     end
 end

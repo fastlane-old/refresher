@@ -18,7 +18,7 @@ class CreateBacons < ActiveRecord::Migration
         current = {
           tool: check.tool,
           launches: 0,
-          launch_date: start_time.to_date
+          launch_date: current_time.to_date
         }
 
         check["data"].each do |t|

@@ -13,7 +13,7 @@
   var data = {
     labels: <%= raw(@days) %>,
     datasets: [
-      <% @data.each do |current| %>
+      <% @data.each do |key, current| %>
         {
           <% current.each do |key, value| %>
             <% pre = (key != :data ? '"' : '') %>

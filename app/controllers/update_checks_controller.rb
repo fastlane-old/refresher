@@ -28,46 +28,39 @@ class UpdateChecksController < ApplicationController
   end
 
   def graphs
-    @data = []
+    @data = {}
     @days = []
     start_time = Time.at(1427068800) # the first day
-    step = 1.day
 
-    UpdateCheck.order(:count).reverse.each do |check|
-      current = {
-        label: check.tool,
+    Bacon.all.each do |bacon|
+      @data[bacon.tool] ||= {
+        label: bacon.tool,
         fillColor: "rgba(220,220,220,0.2)",
-        strokeColor: tool_colors[check.tool.to_sym],
-        pointColor: tool_colors[check.tool.to_sym],
+        strokeColor: tool_colors[bacon.tool.to_sym],
+        pointColor: tool_colors[bacon.tool.to_sym],
         pointStrokeColor: "#fff",
         pointHighlightFill: "#fff",
         pointHighlightStroke: "rgba(220,220,220,1)",
         data: []
       }
 
-      current_time = start_time
-      counter = 0
-      @days = []
-      while current_time <= Time.now
-        current[:data][counter] ||= 0
-        @days << current_time.strftime("%d.%m.%Y")
+      counter = (bacon.launch_date.to_date - start_time.to_date).to_i
 
-        check["data"].each do |t|
-          if Time.at(t) > current_time and Time.at(t) < (current_time + step)
-            current[:data][counter] += 1
-          end
-        end
+      @data[bacon.tool][:data][counter] ||= 0
+      @data[bacon.tool][:data][counter] += 1
 
-        current_time += step
-        counter += 1
+      # Fill nils with 0
+      @data[bacon.tool][:data].each_with_index do |k, index|
+        @data[bacon.tool][:data][index] ||= 0
       end
 
-      @data << current
+      formatted_string = bacon.launch_date.strftime("%d.%m.%Y")
+      @days << formatted_string unless @days.include?formatted_string
     end
 
     # Now generate cumulative graph
     @cumulative = []
-    @data.each do |current|
+    @data.each do |key, current|
       new_val = current.dup
       new_data = []
       new_val[:data].each_with_index do |value, i|
@@ -80,7 +73,10 @@ class UpdateChecksController < ApplicationController
 
   def stats
     data = {}
-    UpdateCheck.order(:count).reverse.each { |t| data[t.tool] = t.count }
+    Bacon.all.order(:launches).reverse.each do |t| 
+      data[t.tool] ||= 0
+      data[t.tool] += t.launches
+    end
     render json: JSON.pretty_generate(data)
   end
 

@@ -47,7 +47,7 @@ class UpdateChecksController < ApplicationController
       counter = (bacon.launch_date.to_date - start_time.to_date).to_i
 
       @data[bacon.tool][:data][counter] ||= 0
-      @data[bacon.tool][:data][counter] += 1
+      @data[bacon.tool][:data][counter] += bacon.launches
 
       # Fill nils with 0
       @data[bacon.tool][:data].each_with_index do |k, index|

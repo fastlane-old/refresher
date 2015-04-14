@@ -94,7 +94,7 @@ class UpdateChecksController < ApplicationController
     end
 
     def store_entry(tool)
-      now = Time.now.to_date + 1.day
+      now = Time.now.to_date
       obj = Bacon.where(tool: tool, launch_date: now).take
 
       unless obj

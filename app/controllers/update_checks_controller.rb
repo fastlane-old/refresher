@@ -32,7 +32,7 @@ class UpdateChecksController < ApplicationController
     @days = []
     start_time = Time.at(1427068800) # the first day
 
-    Bacon.all.each do |bacon|
+    Bacon.all.order(:launch_date).each do |bacon|
       @data[bacon.tool] ||= {
         label: bacon.tool,
         fillColor: "rgba(220,220,220,0.2)",

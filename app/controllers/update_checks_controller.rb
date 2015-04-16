@@ -56,6 +56,9 @@ class UpdateChecksController < ApplicationController
       @days << formatted_string unless @days.include?formatted_string
     end
 
+    # Sort by # of launches
+    @data = @data.sort_by { |name, data| data[:data].sum }.reverse
+
     # Now generate cumulative graph
     @cumulative = []
     @data.each do |key, current|

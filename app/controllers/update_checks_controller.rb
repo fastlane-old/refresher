@@ -1,7 +1,5 @@
 class UpdateChecksController < ApplicationController
   require 'open-uri'
-  before_action :set_update_check, only: [:show, :edit, :update, :destroy]
-
 
   def check_update
     tool = params[:tool_name]

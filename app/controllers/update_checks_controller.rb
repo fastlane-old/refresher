@@ -33,7 +33,7 @@ class UpdateChecksController < ApplicationController
     start_time = Time.at(1427068800) # the first day
 
     Bacon.all.order(:launch_date).each do |bacon|
-      next if (show_fastlane and bacon.tool == 'fastlane')
+      next if (!show_fastlane and bacon.tool == 'fastlane')
 
       @data[bacon.tool] ||= {
         label: bacon.tool,

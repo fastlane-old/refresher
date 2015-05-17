@@ -26,11 +26,15 @@ class UpdateChecksController < ApplicationController
   end
 
   def graphs
+    show_fastlane = params[:fastlane] # as fastlane is launched far too often, it's hidden by default
+
     @data = {}
     @days = []
     start_time = Time.at(1427068800) # the first day
 
     Bacon.all.order(:launch_date).each do |bacon|
+      next if (show_fastlane and bacon.tool == 'fastlane')
+
       @data[bacon.tool] ||= {
         label: bacon.tool,
         fillColor: "rgba(220,220,220,0.2)",

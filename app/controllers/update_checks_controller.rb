@@ -30,7 +30,7 @@ class UpdateChecksController < ApplicationController
 
     @data = {}
     @days = []
-    start_time = Time.at(1427068800) # the first day
+    start_time = Time.at(1427068800) # the first day we started tracking the launches
 
     Bacon.all.order(:launch_date).each do |bacon|
       next if (!show_fastlane and bacon.tool == 'fastlane')
@@ -102,11 +102,13 @@ class UpdateChecksController < ApplicationController
         obj = Bacon.create(({
           tool: tool,
           launches: 0,
-          launch_date: now
+          launch_date: now,
+          ci: 0
         }))
       end
 
       obj.launches += 1
+      obj.ci += 1 if params[:ci]
       obj.save
     end
 end

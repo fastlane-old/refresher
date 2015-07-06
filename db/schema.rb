@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150416093335) do
+ActiveRecord::Schema.define(version: 20150706090241) do
 
   create_table "bacons", force: :cascade do |t|
     t.string   "tool"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20150416093335) do
     t.integer  "launches"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "ci"
   end
 
 end

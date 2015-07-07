@@ -44,6 +44,14 @@
           <% end %>
         },
       <% end %>
+      <% @ci_cumulative.each do |current| %>
+        {
+          <% current.each do |key, value| %>
+            <% pre = (key != :data ? '"' : '') %>
+            <%= key %>: <%= raw(pre + value.to_s + pre) %>,
+          <% end %>
+        },
+      <% end %>
     ]
   };
 

@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 20150706090241) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.integer  "ci"
+    t.long  "duration"
+    t.long  "duration_ci"
   end
 
 end

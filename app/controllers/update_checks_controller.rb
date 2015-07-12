@@ -112,6 +112,19 @@ class UpdateChecksController < ApplicationController
     render json: JSON.pretty_generate(data)
   end
 
+  def store_time
+    now = Time.now.to_date
+    tool = params[:tool_name]
+    obj = Bacon.where(tool: tool, launch_date: now).take
+
+    time = params[:time].to_i
+    obj.duration += time
+    obj.duration_ci += time if params[:ci]
+    obj.save
+
+    render json: {status: :ok}
+  end
+
   private
     def fetch_version(tool)
       Rails.cache.fetch(tool, expires_in: 5.minutes) do
@@ -130,7 +143,9 @@ class UpdateChecksController < ApplicationController
           tool: tool,
           launches: 0,
           launch_date: now,
-          ci: 0
+          ci: 0,
+          duration: 0,
+          duration_ci: 0
         }))
       end
 

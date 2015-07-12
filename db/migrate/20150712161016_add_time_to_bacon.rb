@@ -1,7 +1,7 @@
 class AddTimeToBacon < ActiveRecord::Migration
   def change
-    add_column :bacons, :duration, :long
-    add_column :bacons, :duration_ci, :long
+    add_column :bacons, :duration, :integer
+    add_column :bacons, :duration_ci, :integer
 
     Bacon.all.each do |bacon|
       bacon.duration = 0

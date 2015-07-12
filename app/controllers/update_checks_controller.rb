@@ -1,4 +1,6 @@
 class UpdateChecksController < ApplicationController
+  skip_before_action :verify_authenticity_token
+  
   require 'open-uri'
 
   def check_update

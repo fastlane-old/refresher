@@ -127,6 +127,15 @@ class UpdateChecksController < ApplicationController
     render json: {status: :ok}
   end
 
+  def get_durations
+    tools = {}
+    Bacon.all.each do |bacon|
+      tools[bacon.tool] ||= 0
+      tools[bacon.tool] += bacon.duration
+    end
+    render json: tools
+  end
+
   private
     def fetch_version(tool)
       Rails.cache.fetch(tool, expires_in: 5.minutes) do

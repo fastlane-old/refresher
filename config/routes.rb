@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get 'graphs' => 'update_checks#graphs'
   get 'graph' => 'update_checks#graphs'
 
+  get 'duration' => 'update_checks#get_durations'
+
   # Update information
   get ':tool_name' => 'update_checks#check_update'
   post ':tool_name' => 'update_checks#check_update'

@@ -31,7 +31,6 @@ class UpdateChecksController < ApplicationController
     show_fastlane = params[:fastlane] # as fastlane is launched far too often, it's hidden by default
 
     @data = {}
-    @ci = {}
     @days = []
     start_time = Time.at(1427068800) # the first day we started tracking the launches
 
@@ -48,30 +47,15 @@ class UpdateChecksController < ApplicationController
         pointHighlightStroke: "rgba(220,220,220,1)",
         data: []
       }
-      
-      @ci[bacon.tool] ||= {
-        label: "#{bacon.tool} (CI)",
-        fillColor: "rgba(220,220,220,0.2)",
-        strokeColor: tool_colors[bacon.tool.to_sym],
-        pointColor: tool_colors[bacon.tool.to_sym],
-        pointStrokeColor: "#fff",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(220,220,220,1)",
-        data: []
-      }
 
       counter = (bacon.launch_date.to_date - start_time.to_date).to_i
 
       @data[bacon.tool][:data][counter] ||= 0
       @data[bacon.tool][:data][counter] += bacon.launches
 
-      @ci[bacon.tool][:data][counter] ||= 0
-      @ci[bacon.tool][:data][counter] += bacon.ci
-
       # Fill nils with 0
       @data[bacon.tool][:data].each_with_index do |k, index|
         @data[bacon.tool][:data][index] ||= 0
-        @ci[bacon.tool][:data][index] ||= 0
       end
 
       formatted_string = bacon.launch_date.strftime("%d.%m.%Y")
@@ -91,17 +75,6 @@ class UpdateChecksController < ApplicationController
       end
       new_val[:data] = new_data
       @cumulative << new_val
-    end
-
-    @ci_cumulative = []
-    @ci.each do |key, current|
-      new_val = current.dup
-      new_data = []
-      new_val[:data].each_with_index do |value, i|
-        new_data[i] = value + (new_data[-1] || 0)
-      end
-      new_val[:data] = new_data
-      @ci_cumulative << new_val
     end
   end
 

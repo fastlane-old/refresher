@@ -73,8 +73,8 @@ class UpdateChecksController < ApplicationController
 
       if bacon.duration > 0
         counter = (bacon.launch_date.to_date - time_start_time.to_date).to_i
-        @time[bacon.tool][:data][counter] ||= 0 # (@time[bacon.tool][:data]).sum
-        @time[bacon.tool][:data][counter] += ((bacon.duration / 60) / 60)
+        @time[bacon.tool][:data][counter] ||= (@time[bacon.tool][:data].last || 0)
+        @time[bacon.tool][:data][counter] += bacon.duration
 
         @time_days << formatted_string unless @time_days.include?formatted_string
       end
@@ -91,6 +91,11 @@ class UpdateChecksController < ApplicationController
     # Sort by # of launches
     @data = @data.sort_by { |name, data| data[:data].sum }.reverse
     @time = @time.sort_by { |name, data| data[:data].sum }.reverse
+
+    # Convert to full hours
+    @time.each do |bacon, current|
+      current[:data].each_with_index { |value, i| current[:data][i] = (value / 60 / 60) }
+    end
 
     # Now generate cumulative graph
     # 

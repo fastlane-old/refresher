@@ -23,7 +23,8 @@ class UpdateChecksController < ApplicationController
       sigh: "#1FBCD2",
       produce: "#FCD648",
       cert: "#607D8B",
-      codes: "#795548"
+      codes: "#795548",
+      pilot: "#4CA3EB"
     }
   end
 

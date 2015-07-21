@@ -1,5 +1,7 @@
 <h3>Graphs about the number of launches of each <a href="https://fastlane.tools" target="_blank">fastlane</a> tool<h3>
 <h4><a href="https://github.com/fastlane/refresher" target="_blank">View the source code on GitHub</a></h4>
+<h3>Time Saved (in hours)</h3>
+<canvas id="timeSaved"></canvas>
 <h3>Cumulative launches</h3>
 <canvas id="cumulative"></canvas>
 <h3>Number of launches</h3>
@@ -16,11 +18,13 @@
     var myLineChart = new Chart(ctx).Line(data, {
       scaleBeginAtZero: true,
       responsive: true,
+      animation : false,
       multiTooltipTemplate: "<\%= datasetLabel %> - <\%= value %>"
     });
   }
 
 
+  generateGraph("#timeSaved", <%= raw(@time.collect { |k, v| v }.to_json) %>, <%= raw(@time_days) %>)
   generateGraph("#daily", <%= raw(@data.collect { |k, v| v }.to_json) %>, <%= raw(@days) %>)
   generateGraph("#cumulative", <%= raw(@cumulative.to_json) %>, <%= raw(@days) %>)
 </script>

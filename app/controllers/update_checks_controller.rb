@@ -35,6 +35,10 @@ class UpdateChecksController < ApplicationController
     @days = []
     start_time = Time.at(1427068800) # the first day we started tracking the launches
 
+    @time = {}
+    @time_days = []
+    time_start_time = Time.at(1436652000)
+
     # Number of launches
     # 
     Bacon.all.order(:launch_date).each do |bacon|
@@ -50,23 +54,43 @@ class UpdateChecksController < ApplicationController
         pointHighlightStroke: "rgba(220,220,220,1)",
         data: []
       }
+      @time[bacon.tool] ||= {
+        label: bacon.tool,
+        fillColor: "rgba(220,220,220,0.2)",
+        strokeColor: tool_colors[bacon.tool.to_sym],
+        pointColor: tool_colors[bacon.tool.to_sym],
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(220,220,220,1)",
+        data: []
+      }
 
+      formatted_string = bacon.launch_date.strftime("%d.%m.%Y")
       counter = (bacon.launch_date.to_date - start_time.to_date).to_i
-
       @data[bacon.tool][:data][counter] ||= 0
       @data[bacon.tool][:data][counter] += bacon.launches
+      @days << formatted_string unless @days.include?formatted_string
 
-      # Fill nils with 0
+      if bacon.duration > 0
+        counter = (bacon.launch_date.to_date - time_start_time.to_date).to_i
+        @time[bacon.tool][:data][counter] ||= 0 # (@time[bacon.tool][:data]).sum
+        @time[bacon.tool][:data][counter] += ((bacon.duration / 60) / 60)
+
+        @time_days << formatted_string unless @time_days.include?formatted_string
+      end
+
+      # Fill nils with 0, otherwise we have nil in it
       @data[bacon.tool][:data].each_with_index do |k, index|
         @data[bacon.tool][:data][index] ||= 0
       end
-
-      formatted_string = bacon.launch_date.strftime("%d.%m.%Y")
-      @days << formatted_string unless @days.include?formatted_string
+      @time[bacon.tool][:data].each_with_index do |k, index|
+        @time[bacon.tool][:data][index] ||= 0
+      end
     end
 
     # Sort by # of launches
     @data = @data.sort_by { |name, data| data[:data].sum }.reverse
+    @time = @time.sort_by { |name, data| data[:data].sum }.reverse
 
     # Now generate cumulative graph
     # 

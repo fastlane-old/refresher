@@ -35,6 +35,8 @@ class UpdateChecksController < ApplicationController
     @days = []
     start_time = Time.at(1427068800) # the first day we started tracking the launches
 
+    # Number of launches
+    # 
     Bacon.all.order(:launch_date).each do |bacon|
       next if (!show_fastlane and bacon.tool == 'fastlane')
 
@@ -67,6 +69,7 @@ class UpdateChecksController < ApplicationController
     @data = @data.sort_by { |name, data| data[:data].sum }.reverse
 
     # Now generate cumulative graph
+    # 
     @cumulative = []
     @data.each do |key, current|
       new_val = current.dup

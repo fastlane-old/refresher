@@ -24,7 +24,8 @@ class UpdateChecksController < ApplicationController
       produce: "#FCD648",
       cert: "#607D8B",
       codes: "#795548",
-      pilot: "#4CA3EB"
+      pilot: "#4CA3EB",
+      gym: "#7A81FF"
     }
   end
 

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   root to: 'update_checks#stats'
 
+  get 'unique' => 'update_checks#unique'
   get 'graphs' => 'update_checks#graphs'
   get 'graph' => 'update_checks#graphs'
 

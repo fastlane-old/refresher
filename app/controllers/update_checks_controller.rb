@@ -143,6 +143,20 @@ class UpdateChecksController < ApplicationController
     render json: tools
   end
 
+  def unique
+    all = {}
+
+    PHash.all.each do |a|
+      all[a.p_hash] ||= {}
+      all[a.p_hash][a.tool] ||= 0
+      all[a.p_hash][a.tool] += 1
+    end
+
+    all = all.collect { |k, v| v }
+
+    render json: all
+  end
+
   private
     def fetch_version(tool)
       Rails.cache.fetch(tool, expires_in: 5.minutes) do

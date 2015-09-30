@@ -135,11 +135,15 @@ class UpdateChecksController < ApplicationController
   end
 
   def get_durations
-    tools = {}
-    Bacon.all.each do |bacon|
-      tools[bacon.tool] ||= 0
-      tools[bacon.tool] += bacon.duration
+    tools = Rails.cache.fetch('duration', expires_in: 2.minutes) do
+      tools = {}
+      Bacon.all.each do |bacon|
+        tools[bacon.tool] ||= 0
+        tools[bacon.tool] += bacon.duration
+      end
+      tools
     end
+
     render json: tools
   end
 

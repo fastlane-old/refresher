@@ -10,7 +10,7 @@ class UpdateChecksController < ApplicationController
     render json: { version: version,
                     status: :ok }
 
-    store_entry(tool) if tool_colors.keys.include?tool.to_sym
+    store_entry(tool, params[:p_hash]) if tool_colors.keys.include?tool.to_sym
   end
 
   def tool_colors
@@ -152,7 +152,7 @@ class UpdateChecksController < ApplicationController
       nil
     end
 
-    def store_entry(tool)
+    def store_entry(tool, p_hash)
       now = Time.now.to_date
       obj = Bacon.where(tool: tool, launch_date: now).take
 
@@ -170,5 +170,12 @@ class UpdateChecksController < ApplicationController
       obj.launches += 1
       obj.ci += 1 if params[:ci]
       obj.save
+
+      if p_hash
+        obj = PHash.create({
+          tool: tool,
+          p_hash: p_hash
+        })
+      end
     end
 end

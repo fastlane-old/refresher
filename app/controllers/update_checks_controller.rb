@@ -158,7 +158,10 @@ class UpdateChecksController < ApplicationController
 
     all = all.collect { |k, v| v }
 
-    render json: all
+    render json: {
+      count: all.count,
+      raw: all
+    }
   end
 
   private

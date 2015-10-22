@@ -25,7 +25,9 @@ class UpdateChecksController < ApplicationController
       cert: "#607D8B",
       codes: "#795548",
       pilot: "#4CA3EB",
-      gym: "#7A81FF"
+      gym: "#7A81FF",
+      scan: "#000000",
+      supply: "#000000",
     }
   end
 

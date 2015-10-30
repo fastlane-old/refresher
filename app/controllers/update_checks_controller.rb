@@ -20,7 +20,7 @@ class UpdateChecksController < ApplicationController
       count[bacon.tool] ||= 0
       count[bacon.tool] += bacon.launches
     end
-    render json: count
+    render json: count.sort_by { |k, v| v }.reverse.to_h
   end
 
   def tool_colors

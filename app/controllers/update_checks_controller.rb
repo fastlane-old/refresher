@@ -13,6 +13,16 @@ class UpdateChecksController < ApplicationController
     store_entry(tool, params[:p_hash]) if tool_colors.keys.include?tool.to_sym
   end
 
+  def weekly
+    count = {}
+    Bacon.all.order(:launch_date).each do |bacon|
+      next unless bacon.launch_date > Time.now - 7.days
+      count[bacon.tool] ||= 0
+      count[bacon.tool] += bacon.launches
+    end
+    render json: count
+  end
+
   def tool_colors
     {
       fastlane: "black",

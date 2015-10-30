@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get 'unique' => 'update_checks#unique'
   get 'graphs' => 'update_checks#graphs'
   get 'graph' => 'update_checks#graphs'
+  get 'weekly' => 'update_checks#weekly'
 
   get 'duration' => 'update_checks#get_durations'
 

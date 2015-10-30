@@ -165,9 +165,14 @@ class UpdateChecksController < ApplicationController
     PHash.all.each do |a|
       next if (Time.now - a.created_at) > 1.week
       all[a.p_hash] ||= {}
-      all[a.p_hash][a.tool] ||= 0
-      all[a.p_hash][a.tool] += 1
+      all[a.p_hash][a.tool] = 1
     end
+    # PHash.all.each do |a|
+    #   next if (Time.now - a.created_at) > 1.week
+    #   all[a.p_hash] ||= {}
+    #   all[a.p_hash][a.tool] ||= 0
+    #   all[a.p_hash][a.tool] += 1
+    # end
 
     all = all.collect { |k, v| v }
 

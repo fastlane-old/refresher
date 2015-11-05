@@ -38,7 +38,7 @@ class UpdateChecksController < ApplicationController
       gym: "#7A81FF",
       scan: "#000000",
       supply: "#000000",
-      wachbuild: "#000000",
+      watchbuild: "#000000",
     }
   end
 

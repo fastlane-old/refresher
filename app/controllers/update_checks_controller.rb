@@ -163,8 +163,9 @@ class UpdateChecksController < ApplicationController
   def unique
     all = {}
 
-    PHash.all.each do |a|
-      next if (Time.now - a.created_at) > 1.week
+    start = Time.now - 1.week
+    finish = Time.now
+    PHash.where(:created_at => start..finish).each do |a|
       all[a.p_hash] ||= {}
       all[a.p_hash][a.tool] = 1
     end

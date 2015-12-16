@@ -1,6 +1,7 @@
 class UpdateChecksController < ApplicationController
   skip_before_action :verify_authenticity_token
-  
+  before_filter :authenticate, only: [:weekly, :graphs, :stats]
+
   require 'open-uri'
 
   def check_update
@@ -14,7 +15,6 @@ class UpdateChecksController < ApplicationController
   end
 
   def weekly
-    authenticate
     count = {}
     Bacon.all.order(:launch_date).each do |bacon|
       next unless bacon.launch_date > Time.now - 7.days
@@ -45,7 +45,6 @@ class UpdateChecksController < ApplicationController
   end
 
   def graphs
-    authenticate
     show_fastlane = params[:fastlane] # as fastlane is launched far too often, it's hidden by default
 
     @data = {}
@@ -129,7 +128,6 @@ class UpdateChecksController < ApplicationController
   end
 
   def stats
-    authenticate
     data = {}
     Bacon.all.order(:launches).reverse.each do |t| 
       data[t.tool] ||= 0

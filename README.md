@@ -15,15 +15,9 @@ refresher
 
 `refresher` is being run on [Heroku](https://www.heroku.com/). All [fastlane](https://fastlane.tools) tools check for available updates on each app start.
 
-`refresher` also caches the latest version number for ~5 minutes. The only thing that is stored is a log of the current time. No user specific information is being stored.
-
-You can see the generated stats on [https://refresher.fastlane.tools/](https://refresher.fastlane.tools/) and the graphs on [https://refresher.fastlane.tools/graphs](https://refresher.fastlane.tools/graphs).
-
-Also, the number of active projects using `fastlane` are available [here](https://refresher.fastlane.tools/unique). The App Identifier will be hashed, so that no sensitive data is transfered. 
+`refresher` also caches the latest version number for ~5 minutes. The App Identifier will be hashed, so that no sensitive data is transfered. 
 
 If you want to opt out, just use the `FASTLANE_SKIP_UPDATE_CHECK` and/or `FASTLANE_OPT_OUT_USAGE` environment variables.
-
-There is also a Raspberry Pi client, that shows the launches in real time on a LED board on [GitHub](https://github.com/KrauseFx/fastrockets).
 
 # License
 This project is licensed under the terms of the MIT license. See the LICENSE file.

@@ -1,6 +1,7 @@
 class UpdateChecksController < ApplicationController
   skip_before_action :verify_authenticity_token
-  
+  before_filter :authenticate, only: [:weekly, :graphs, :stats]
+
   require 'open-uri'
 
   def check_update
@@ -39,6 +40,7 @@ class UpdateChecksController < ApplicationController
       scan: "#000000",
       supply: "#000000",
       watchbuild: "#000000",
+      match: "#000000"
     }
   end
 
@@ -185,6 +187,12 @@ class UpdateChecksController < ApplicationController
   end
 
   private
+    def authenticate
+      authenticate_or_request_with_http_basic do |username, password|
+        username == "admin" && password == ENV["FL_PASSWORD"]
+      end
+    end
+
     def fetch_version(tool)
       Rails.cache.fetch(tool, expires_in: 5.minutes) do
         JSON.parse(open("https://rubygems.org/api/v1/gems/#{tool}.json").read)["version"]

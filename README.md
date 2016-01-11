@@ -10,7 +10,7 @@
 refresher
 ============
 
-[![Twitter: @KauseFx](https://img.shields.io/badge/contact-@KrauseFx-blue.svg?style=flat)](https://twitter.com/KrauseFx)
+[![Twitter: @FastlaneTools](https://img.shields.io/badge/contact-@FastlaneTools-blue.svg?style=flat)](https://twitter.com/FastlaneTools)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://github.com/fastlane/refresher/blob/master/LICENSE)
 
 `refresher` is being run on [Heroku](https://www.heroku.com/). All [fastlane](https://fastlane.tools) tools check for available updates on each app start.

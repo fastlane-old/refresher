@@ -19,6 +19,9 @@ refresher
 
 If you want to opt out, just use the `FASTLANE_SKIP_UPDATE_CHECK` and/or `FASTLANE_OPT_OUT_USAGE` environment variables.
 
+# Code of Conduct
+Help us keep `refresher` open and inclusive. Please read and follow our [Code of Conduct](https://github.com/fastlane/code-of-conduct).
+
 # License
 This project is licensed under the terms of the MIT license. See the LICENSE file.
 

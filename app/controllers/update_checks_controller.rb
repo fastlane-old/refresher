@@ -116,7 +116,13 @@ class UpdateChecksController < ApplicationController
 
   def stats
     data = {}
-    Bacon.all.order(:launches).reverse.each do |t| 
+    if params[:weeks]
+      coll = Bacon.where(created_at: (Time.now - params[:weeks].to_i.weeks)..Time.now)
+    else
+      coll = Bacon.all
+    end
+
+    coll.order(:launches).reverse.each do |t| 
       data[t.tool] ||= 0
       if params[:ci].to_i > 0
         data[t.tool] += t.ci
@@ -158,7 +164,7 @@ class UpdateChecksController < ApplicationController
 
     start = Time.now - 1.week
     finish = Time.now
-    PHash.where(:created_at => start..finish).each do |a|
+    PHash.where(created_at: start..finish).each do |a|
       all[a.p_hash] ||= {}
       all[a.p_hash][a.tool] = 1
     end

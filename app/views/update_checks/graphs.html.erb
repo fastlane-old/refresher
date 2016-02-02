@@ -26,4 +26,10 @@
   generateGraph("#cumulative", <%= raw(@cumulative.to_json) %>, <%= raw(@days) %>)
 </script>
 
+<%= @ci_ratio.round(2) %>% of the launches 
+<% if params[:weeks] %>
+  in the last <%= params[:weeks] %> weeks 
+<% end %>
+came from a CI machine
+
 <h3><a href="https://github.com/fastlane/refresher" target="_blank">View the source code of 'refresher'</a></h3>

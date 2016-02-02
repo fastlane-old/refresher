@@ -56,6 +56,9 @@ class UpdateChecksController < ApplicationController
       start_time = Time.at(1427068800) # the first day we started tracking the launches
     end
 
+    overall_sum = 0
+    ci_sum = 0
+
     # Number of launches
     # 
     Bacon.all.order(:launch_date).each do |bacon|
@@ -76,7 +79,14 @@ class UpdateChecksController < ApplicationController
       formatted_string = bacon.launch_date.strftime("%d.%m.%Y")
       counter = (bacon.launch_date.to_date - start_time.to_date).to_i
       @data[bacon.tool][:data][counter] ||= 0
-      @data[bacon.tool][:data][counter] += bacon.launches
+      if params[:ci]
+        @data[bacon.tool][:data][counter] += bacon.ci
+      else
+        @data[bacon.tool][:data][counter] += bacon.launches
+      end
+      overall_sum += bacon.launches
+      ci_sum += bacon.ci
+
       @days << formatted_string unless @days.include?formatted_string
 
       # Fill nils with 0, otherwise we have nil in it
@@ -84,6 +94,8 @@ class UpdateChecksController < ApplicationController
         @data[bacon.tool][:data][index] ||= 0
       end
     end
+
+    @ci_ratio = (ci_sum.to_f / overall_sum.to_f) * 100
 
     # Sort by # of launches
     @data = @data.sort_by { |name, data| data[:data].sum }.reverse

@@ -79,7 +79,7 @@ class UpdateChecksController < ApplicationController
       formatted_string = bacon.launch_date.strftime("%d.%m.%Y")
       counter = (bacon.launch_date.to_date - start_time.to_date).to_i
       @data[bacon.tool][:data][counter] ||= 0
-      if params[:ci]
+      if params[:ci].to_i > 0
         @data[bacon.tool][:data][counter] += bacon.ci
       else
         @data[bacon.tool][:data][counter] += bacon.launches
@@ -118,7 +118,11 @@ class UpdateChecksController < ApplicationController
     data = {}
     Bacon.all.order(:launches).reverse.each do |t| 
       data[t.tool] ||= 0
-      data[t.tool] += t.launches
+      if params[:ci].to_i > 0
+        data[t.tool] += t.ci
+      else
+        data[t.tool] += t.launches
+      end
     end
     render json: JSON.pretty_generate(data)
   end

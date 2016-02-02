@@ -49,16 +49,18 @@ class UpdateChecksController < ApplicationController
 
     @data = {}
     @days = []
-    start_time = Time.at(1427068800) # the first day we started tracking the launches
 
-    # @time = {}
-    # @time_days = []
-    time_start_time = Time.at(1436652000)
+    if params[:weeks]
+      start_time = Time.now - params[:weeks].to_i.weeks
+    else
+      start_time = Time.at(1427068800) # the first day we started tracking the launches
+    end
 
     # Number of launches
     # 
     Bacon.all.order(:launch_date).each do |bacon|
       next if (!show_fastlane and bacon.tool == 'fastlane')
+      next if (bacon.launch_date < start_time)
 
       @data[bacon.tool] ||= {
         label: bacon.tool,
@@ -144,12 +146,6 @@ class UpdateChecksController < ApplicationController
       all[a.p_hash] ||= {}
       all[a.p_hash][a.tool] = 1
     end
-    # PHash.all.each do |a|
-    #   next if (Time.now - a.created_at) > 1.week
-    #   all[a.p_hash] ||= {}
-    #   all[a.p_hash][a.tool] ||= 0
-    #   all[a.p_hash][a.tool] += 1
-    # end
 
     all = all.collect { |k, v| v }
 

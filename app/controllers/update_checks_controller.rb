@@ -1,6 +1,6 @@
 class UpdateChecksController < ApplicationController
   skip_before_action :verify_authenticity_token
-  before_filter :authenticate, only: [:weekly, :graphs, :stats]
+  before_filter :authenticate, only: [:unique, :weekly, :graphs, :stats]
 
   require 'open-uri'
 
@@ -61,7 +61,7 @@ class UpdateChecksController < ApplicationController
     ci_sum = 0
 
     # Number of launches
-    # 
+    #
     Bacon.all.order(:launch_date).each do |bacon|
       next if (!show_fastlane and bacon.tool == 'fastlane')
       next if (bacon.launch_date < start_time)
@@ -102,7 +102,7 @@ class UpdateChecksController < ApplicationController
     @data = @data.sort_by { |name, data| data[:data].sum }.reverse
 
     # Now generate cumulative graph
-    # 
+    #
     @cumulative = []
     @data.each do |key, current|
       new_val = current.dup
@@ -123,7 +123,7 @@ class UpdateChecksController < ApplicationController
       coll = Bacon.all
     end
 
-    coll.order(:launches).reverse.each do |t| 
+    coll.order(:launches).reverse.each do |t|
       data[t.tool] ||= 0
       if params[:ci].to_i > 0
         data[t.tool] += t.ci

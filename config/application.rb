@@ -27,5 +27,12 @@ module Refresher
       'Access-Control-Allow-Origin' => '*',
       'Access-Control-Request-Method' => '*'
     })
+
+    config.middleware.insert_before 0, "Rack::Cors" do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => [:get, :options]
+      end
+    end
   end
 end

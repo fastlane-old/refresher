@@ -37,10 +37,10 @@ class UpdateChecksController < ApplicationController
       codes: "#795548",
       pilot: "#4CA3EB",
       gym: "#7A81FF",
-      scan: "#000000",
-      supply: "#000000",
+      scan: "#FF3500",
+      supply: "#D502BC",
       watchbuild: "#000000",
-      match: "#000000",
+      match: "#FD972D",
       screengrab: "#257E6D"
     }
   end

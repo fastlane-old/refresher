@@ -134,6 +134,13 @@ class UpdateChecksController < ApplicationController
     render json: JSON.pretty_generate(data)
   end
 
+  def rockets
+    count = Rails.cache.fetch('duration', expires_in: 5.seconds) do
+      Bacon.all.order(:launches).sum(:launches)
+    end
+    render json: JSON.pretty_generate({count: count})
+  end
+
   def store_time
     now = Time.now.to_date
     tool = params[:tool_name]

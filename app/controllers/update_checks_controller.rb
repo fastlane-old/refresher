@@ -135,10 +135,11 @@ class UpdateChecksController < ApplicationController
   end
 
   def rockets
-    count = Rails.cache.fetch('duration', expires_in: 5.seconds) do
+    count = Rails.cache.fetch('rockets', expires_in: 5.seconds) do
       Bacon.sum(:launches)
     end
-    render json: JSON.pretty_generate({count: count})
+
+    render json: { count: count }
   end
 
   def store_time
@@ -151,20 +152,15 @@ class UpdateChecksController < ApplicationController
     obj.duration_ci += time if params[:ci]
     obj.save
 
-    render json: {status: :ok}
+    render json: { status: :ok }
   end
 
   def get_durations
     tools = Rails.cache.fetch('duration', expires_in: 2.minutes) do
-      tools = {}
-      Bacon.all.each do |bacon|
-        tools[bacon.tool] ||= 0
-        tools[bacon.tool] += bacon.duration
-      end
-      tools
+      Bacon.sum(:duration)
     end
 
-    render json: tools
+    render json: { fastlane: tools }
   end
 
   def unique

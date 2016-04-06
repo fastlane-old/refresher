@@ -136,7 +136,7 @@ class UpdateChecksController < ApplicationController
 
   def rockets
     count = Rails.cache.fetch('rockets', expires_in: 5.seconds) do
-      Bacon.sum(:launches)
+      Bacon.where("DATE(created_at) = ?", Date.today).sum(:launches)
     end
 
     render json: { count: count }

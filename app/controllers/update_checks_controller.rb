@@ -173,8 +173,6 @@ class UpdateChecksController < ApplicationController
       all[a.p_hash][a.tool] = 1
     end
 
-    all = all.collect { |k, v| v }
-
     render json: {
       count: all.count,
       raw: all

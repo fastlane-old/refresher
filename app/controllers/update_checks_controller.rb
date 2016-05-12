@@ -164,19 +164,11 @@ class UpdateChecksController < ApplicationController
   end
 
   def unique
-    all = {}
-
     start = Time.now - 1.week
     finish = Time.now
-    PHash.where(created_at: start..finish).each do |a|
-      all[a.p_hash] ||= {}
-      all[a.p_hash][a.tool] = 1
-    end
 
-    render json: {
-      count: all.count,
-      raw: all
-    }
+    count = PHash.where(created_at: start..finish).group(:p_hash).count.count # count twice since the first is group by
+    render json: { count: count }
   end
 
   private

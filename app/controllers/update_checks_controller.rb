@@ -49,6 +49,7 @@ class UpdateChecksController < ApplicationController
     show_fastlane = params[:fastlane] # as fastlane is launched far too often, it's hidden by default
 
     @data = {}
+    @days_raw = []
     @days = []
 
     if params[:weeks]
@@ -89,6 +90,7 @@ class UpdateChecksController < ApplicationController
       ci_sum += bacon.ci
 
       @days << formatted_string unless @days.include?formatted_string
+      @days_raw << bacon.launch_date unless @days_raw.include?(bacon.launch_date)
 
       # Fill nils with 0, otherwise we have nil in it
       @data[bacon.tool][:data].each_with_index do |k, index|
@@ -112,6 +114,13 @@ class UpdateChecksController < ApplicationController
       end
       new_val[:data] = new_data
       @cumulative << new_val
+    end
+
+    # Generate the duration graph
+    @duration = @data.first.last.dup # to get the boiler code
+    @duration[:data] = []
+    @days_raw.each do |current|
+      @duration[:data] << (Bacon.where(launch_date: Time.at(0)..current).sum(:duration) / 60 / 60)
     end
   end
 

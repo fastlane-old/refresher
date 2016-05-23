@@ -1,5 +1,8 @@
 <h3>Graphs about the number of launches of each <a href="https://fastlane.tools" target="_blank">fastlane</a> tool<h3>
 <h4><a href="https://github.com/fastlane/refresher" target="_blank">View the source code on GitHub</a></h4>
+
+<h3>Total time saved (in hours)</h3>
+<canvas id="duration"></canvas>
 <h3>Cumulative launches</h3>
 <canvas id="cumulative"></canvas>
 <h3>Number of launches</h3>
@@ -21,7 +24,7 @@
     });
   }
 
-
+  generateGraph("#duration", [<%= raw(@duration.to_json) %>], <%= raw(@days) %>)
   generateGraph("#daily", <%= raw(@data.collect { |k, v| v }.to_json) %>, <%= raw(@days) %>)
   generateGraph("#cumulative", <%= raw(@cumulative.to_json) %>, <%= raw(@days) %>)
 </script>

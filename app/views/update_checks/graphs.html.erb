@@ -3,6 +3,14 @@
 
 <h3>Total time saved (in hours)</h3>
 <canvas id="duration"></canvas>
+
+<h4>Current fastlane speed 🚀</h4>
+<ul>
+<li>Every <b>hour</b> that passes, fastlane runs for <b><%= @current_speed %> hours</b></li>
+<li>Every <b>minute</b> that passes, fastlane runs for <b><%= @current_speed / 60.0 %> hours</b></li>
+<li>Last <b>week</b> fastlane ran for <b><%= @pass_time_in_hours %> hours</b></li>
+</ul>
+
 <h3>Cumulative launches</h3>
 <canvas id="cumulative"></canvas>
 <h3>Number of launches</h3>

@@ -8,7 +8,7 @@
 <ul>
 <li>Every <b>hour</b> that passes, fastlane runs for <b><%= @current_speed.round %> hours</b></li>
 <li>Every <b>minute</b> that passes, fastlane runs for <b><%= (@current_speed / 60.0).round(2) %> hours</b></li>
-<li>Last <b>week</b> fastlane ran for <b><%= @pass_time_in_hours.round %> hours, that's <b><%= (@pass_time_in_hours / 24).round %> days</b></b></li>
+<li>Last <b>week</b> fastlane ran for <b><%= @pass_time_in_hours.round %> hours, that's <b><%= (@pass_time_in_hours / 24).round %> days</b>, or <b><%= (@pass_time_in_hours / 24 / 365).round %> years</b></li>
 </ul>
 
 <h3>Cumulative launches</h3>

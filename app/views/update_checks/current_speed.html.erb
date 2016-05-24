@@ -1,0 +1,23 @@
+
+<style type="text/css">
+  * {
+    background-color: black;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+    padding: 0px;
+    margin: 0px;
+    color: white;
+  }
+  h1 {
+    font-size: 50vw;
+    margin-top: 19vw;
+    font-weight: 100;
+  }
+</style>
+
+<h1><%= @current_speed.round %></h1>
+
+<script type="text/javascript">
+setTimeout(function() {
+  this.location.reload()
+}, 1000 * 60)
+</script>

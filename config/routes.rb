@@ -3,11 +3,12 @@ Rails.application.routes.draw do
 
   root to: 'update_checks#stats'
 
-  get 'rockets' => 'update_checks#rockets'
+  get 'rockets' => 'update_checks#rockets' # rockets API
   get 'unique' => 'update_checks#unique'
   get 'graphs' => 'update_checks#graphs'
   get 'graph' => 'update_checks#graphs'
   get 'weekly' => 'update_checks#weekly'
+  get 'speed' => 'update_checks#current_speed'
 
   get 'duration' => 'update_checks#get_durations'
 

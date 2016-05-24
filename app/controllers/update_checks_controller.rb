@@ -1,6 +1,6 @@
 class UpdateChecksController < ApplicationController
   skip_before_action :verify_authenticity_token
-  before_filter :authenticate, only: [:unique, :weekly, :graphs, :stats]
+  before_filter :authenticate, only: [:unique, :weekly, :graphs, :stats, :current_speed]
 
   require 'open-uri'
 
@@ -123,6 +123,11 @@ class UpdateChecksController < ApplicationController
       @duration[:data] << (Bacon.where(launch_date: Time.at(0)..current).sum(:duration) / 60 / 60)
     end
 
+    current_speed
+  end
+
+  # This both renders a view and is called from graphs
+  def current_speed
     # Measure the current speed based on the last 7 days
     number_of_days = 7
     @pass_time_in_hours = (Bacon.where(launch_date: Time.now - number_of_days.days..Time.now).sum(:duration) / 60.0 / 60.0) 

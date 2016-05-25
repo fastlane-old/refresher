@@ -128,9 +128,11 @@ class UpdateChecksController < ApplicationController
 
   # This both renders a view and is called from graphs
   def current_speed(number_of_days: nil)
+    # We have use -1.day since we can't measure today, since today isn't over yet
+
     # Measure the current speed based on the last x days
     number_of_days ||= 1
-    @pass_time_in_hours = (Bacon.where(launch_date: Time.now - number_of_days.days..Time.now).sum(:duration) / 60.0 / 60.0) 
+    @pass_time_in_hours = (Bacon.where(launch_date: (Time.now - number_of_days.days)..(Time.now - 1.day)).sum(:duration) / 60.0 / 60.0) 
     @current_speed = @pass_time_in_hours / (number_of_days * 24)
     # @current_speed => The number of hours that fastlane runs every hour
   end

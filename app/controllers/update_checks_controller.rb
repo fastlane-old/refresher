@@ -124,6 +124,8 @@ class UpdateChecksController < ApplicationController
     end
 
     current_speed(number_of_days: 7)
+
+    @duration_total = fastlane_duration
   end
 
   # This both renders a view and is called from graphs
@@ -177,12 +179,14 @@ class UpdateChecksController < ApplicationController
     render json: { status: :ok }
   end
 
-  def get_durations
-    tools = Rails.cache.fetch('duration', expires_in: 2.minutes) do
+  def fastlane_duration
+    Rails.cache.fetch('duration', expires_in: 2.minutes) do
       Bacon.sum(:duration)
     end
+  end
 
-    render json: { fastlane: tools }
+  def get_durations
+    render json: { fastlane: fastlane_duration }
   end
 
   def unique

@@ -9,6 +9,11 @@
 <li>Every <b>hour</b> that passes, fastlane runs for <b><%= @current_speed.round %> hours</b></li>
 <li>Every <b>minute</b> that passes, fastlane runs for <b><%= (@current_speed / 60.0).round(2) %> hours</b></li>
 <li>Last <b>week</b> fastlane ran for <b><%= @pass_time_in_hours.round %> hours</b>, that's <b><%= (@pass_time_in_hours / 24).round %> days</b>, or <b><%= (@pass_time_in_hours / 24 / 365).round %> years</b></li>
+
+<% hours_per_year = 252 * 8 %>
+<% duration_in_hours = @duration_total / 60.0 / 60.0 %>
+<% dev_years = duration_in_hours / hours_per_year %>
+<li>fastlane has saved a total of <b><%= dev_years.round %> developer years</b> (252 work days)
 </ul>
 
 <h3>Cumulative launches</h3>

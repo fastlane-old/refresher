@@ -193,8 +193,23 @@ class UpdateChecksController < ApplicationController
     start = Time.now - 1.week
     finish = Time.now
 
-    count = PHash.where(created_at: start..finish).group(:p_hash).count.count # count twice since the first is group by
-    render json: { count: count }
+    if params[:slow]
+      all = {}
+
+      PHash.where(created_at: start..finish).each do |a|
+        all[a.p_hash] ||= {}
+        all[a.p_hash][a.tool] = 1
+      end
+
+      render json: {
+        count: all.count,
+        raw: all
+      }
+    else
+      # count twice since the first is group by
+      count = PHash.where(created_at: start..finish).group(:p_hash).count.count
+      render json: { count: count }
+    end
   end
 
   private

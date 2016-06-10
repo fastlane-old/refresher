@@ -190,7 +190,7 @@ class UpdateChecksController < ApplicationController
   end
 
   def unique
-    weeks = params[:weeks] || 1
+    weeks = (params[:weeks] || 1).to_i
     start = Time.now - weeks.week
     finish = Time.now
 

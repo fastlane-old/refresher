@@ -11,7 +11,7 @@ class UpdateChecksController < ApplicationController
     render json: { version: version,
                     status: :ok }
 
-    store_entry(tool, params[:p_hash]) if tool_colors.keys.include?tool.to_sym
+    store_entry(tool, params[:p_hash], params[:platform]) if tool_colors.keys.include?(tool.to_sym)
   end
 
   def weekly
@@ -207,9 +207,14 @@ class UpdateChecksController < ApplicationController
         raw: all
       }
     else
+      platform = params[:platform]
+
       # count twice since the first is group by
-      count = PHash.where(created_at: start..finish).group(:p_hash).count.count
-      render json: { count: count }
+      render json: {
+        count: PHash.where(created_at: start..finish).group(:p_hash).count.count,
+        ios: PHash.where(platform: "ios", created_at: start..finish).group(:p_hash).count.count,
+        android: PHash.where(platform: "android", created_at: start..finish).group(:p_hash).count.count
+      }
     end
   end
 
@@ -228,7 +233,7 @@ class UpdateChecksController < ApplicationController
       nil
     end
 
-    def store_entry(tool, p_hash)
+    def store_entry(tool, p_hash, platform)
       now = Time.now.to_date
       obj = Bacon.where(tool: tool, launch_date: now).take
 
@@ -250,7 +255,8 @@ class UpdateChecksController < ApplicationController
       if p_hash
         obj = PHash.create({
           tool: tool,
-          p_hash: p_hash
+          p_hash: p_hash,
+          platform: platform
         })
       end
     end

@@ -210,13 +210,11 @@ class UpdateChecksController < ApplicationController
       platform = params[:platform]
 
       # count twice since the first is group by
-      where_filter = (platform.nil? ?
-        PHash.where(created_at: start..finish) :
-        PHash.where(created_at: start..finish, platform: platform)
-      )
-
-      count = where_filter.group(:p_hash).count.count
-      render json: { count: count }
+      render json: {
+        count: PHash.where(created_at: start..finish).group(:p_hash).count.count,
+        ios: PHash.where(platform: "ios", created_at: start..finish).group(:p_hash).count.count,
+        android: PHash.where(platform: "android", created_at: start..finish).group(:p_hash).count.count
+      }
     end
   end
 

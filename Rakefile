@@ -10,7 +10,7 @@ task :db do
   app = ENV["HEROKU_APP"] || "fastlane-refresher"
   db_name = ENV["DB_NAME"] || "refresher"
 
-  puts "This script is going to drop your local database #{db_name} and fetch the database from heroku #{app}. Please confirm!"
+  puts "This script is going to drop your local database #{db_name} and fetch the database from heroku #{app}. Quit now if that doesn't sound good, or press any key to continue"
   STDIN.gets
 
   sh "heroku pg:backups capture --app #{app}"

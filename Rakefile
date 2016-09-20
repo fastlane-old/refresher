@@ -9,6 +9,7 @@ Rails.application.load_tasks
 task :db do
   app = ENV["HEROKU_APP"] || "fastlane-refresher"
   db_name = ENV["DB_NAME"] || "refresher"
+  user = ENV["USER"]
 
   puts "This script is going to drop your local database #{db_name} and fetch the database from heroku #{app}. Quit now if that doesn't sound good, or press any key to continue"
   STDIN.gets
@@ -17,5 +18,5 @@ task :db do
   sh "curl -o latest.dump `heroku pg:backups public-url --app #{app}`"
   sh "dropdb #{db_name}"
   sh "createdb #{db_name}"
-  sh "pg_restore --verbose --clean --no-acl --no-owner -h localhost -U krausefx -d #{db_name} latest.dump"
+  sh "pg_restore --verbose --clean --no-acl --no-owner -h localhost -U #{user} -d #{db_name} latest.dump"
 end

@@ -208,13 +208,26 @@ class UpdateChecksController < ApplicationController
       }
     else
       platform = params[:platform]
+      currently_active = PHash.where(created_at: start..finish).group(:p_hash).count.keys
 
-      # count twice since the first is group by
-      render json: {
-        count: PHash.where(created_at: start..finish).group(:p_hash).count.count,
+      data = {
+        count: currently_active.count,
         ios: PHash.where(platform: "ios", created_at: start..finish).group(:p_hash).count.count,
         android: PHash.where(platform: "android", created_at: start..finish).group(:p_hash).count.count
       }
+      data[:ios_share] = "#{((data[:ios].to_f / (data[:android] + data[:ios])) * 100).round(2)} %"
+      data[:android_share] = "#{((data[:android].to_f / (data[:android] + data[:ios])) * 100).round(2)} %"
+
+      # count twice since the first is group by
+      if params[:churn]
+        active_all_time = PHash.group(:p_hash).count.keys
+
+        data[:active_all_time] = active_all_time.count
+        data[:total_churn] = (active_all_time - currently_active).count
+        data[:all_time_churn_percentage] = "#{((data[:total_churn].to_f / active_all_time.count) * 100).round(2)} %"
+      end
+
+      render json: data
     end
   end
 

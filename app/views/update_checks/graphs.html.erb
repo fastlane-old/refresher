@@ -1,8 +1,4 @@
 <h3>Graphs about the number of launches of each <a href="https://fastlane.tools" target="_blank">fastlane</a> tool<h3>
-<h4><a href="https://github.com/fastlane/refresher" target="_blank">View the source code on GitHub</a></h4>
-
-<h3>Total time saved (in hours)</h3>
-<canvas id="duration"></canvas>
 
 <h4>Current fastlane speed 🚀</h4>
 <ul>
@@ -16,31 +12,16 @@
 <li>fastlane has saved a total of <b><%= dev_years.round %> developer years</b> (252 work days)
 </ul>
 
+<h4>Absolute numbers 🚀</h4>
+<ul>
+<li>Total number of <i>fastlane</i> launches: <b><%= number_with_delimiter(@cumulative.find { |a| a[:label] == "fastlane" }[:data].last) %></b></li>
+<li>Total number of launches of all tools: <b><%= number_with_delimiter(@cumulative.collect { |a| a[:data].last }.sum) %></b></li>
+</ul>
+
 <h3>Cumulative launches</h3>
 <canvas id="cumulative"></canvas>
 <h3>Number of launches</h3>
 <canvas id="daily"></canvas>
-
-
-<script type="text/javascript">
-  function generateGraph(sel, data, labels) {
-    var ctx = $(sel).get(0).getContext("2d");
-    var data = {
-      labels: labels,
-      datasets: data
-    };
-    var myLineChart = new Chart(ctx).Line(data, {
-      scaleBeginAtZero: true,
-      responsive: true,
-      animation : false,
-      multiTooltipTemplate: "<\%= datasetLabel %> - <\%= value %>"
-    });
-  }
-
-  generateGraph("#duration", [<%= raw(@duration.to_json) %>], <%= raw(@days) %>)
-  generateGraph("#daily", <%= raw(@data.collect { |k, v| v }.to_json) %>, <%= raw(@days) %>)
-  generateGraph("#cumulative", <%= raw(@cumulative.to_json) %>, <%= raw(@days) %>)
-</script>
 
 <%= @ci_ratio.round(2) %>% of the launches 
 <% if params[:weeks] %>
@@ -48,4 +29,24 @@
 <% end %>
 came from a CI machine
 
-<h3><a href="https://github.com/fastlane/refresher" target="_blank">View the source code of 'refresher'</a></h3>
+<!-- Javascript lol -->
+<script type="text/javascript">
+  function generateGraph(sel, data, labels) {
+    var ctx = $(sel).get(0).getContext("2d");
+    var data = {
+      labels: labels,
+      datasets: data
+    };
+    var myLineChart = new Chart(ctx , {
+      type: "line",
+      data: data,
+      scaleBeginAtZero: true,
+      responsive: true,
+      animation : false,
+      multiTooltipTemplate: "<\%= datasetLabel %> - <\%= value %>"
+  });
+  }
+
+  generateGraph("#daily", <%= raw(@data.collect { |k, v| v }.to_json) %>, <%= raw(@days) %>)
+  generateGraph("#cumulative", <%= raw(@cumulative.to_json) %>, <%= raw(@days) %>)
+</script>

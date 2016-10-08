@@ -70,9 +70,10 @@ class UpdateChecksController < ApplicationController
       @data[bacon.tool] ||= {
         label: bacon.tool,
         fillColor: "rgba(220,220,220,0.2)",
-        strokeColor: tool_colors[bacon.tool.to_sym],
-        pointColor: tool_colors[bacon.tool.to_sym],
+        backgroundColor: "rgba(220,220,220,0.07)",
+        borderColor: tool_colors[bacon.tool.to_sym],
         pointStrokeColor: "#fff",
+        pointHitRadius: 10,
         pointHighlightFill: "#fff",
         pointHighlightStroke: "rgba(220,220,220,1)",
         data: []
@@ -114,13 +115,6 @@ class UpdateChecksController < ApplicationController
       end
       new_val[:data] = new_data
       @cumulative << new_val
-    end
-
-    # Generate the duration graph
-    @duration = @data.first.last.dup # to get the boiler code
-    @duration[:data] = []
-    @days_raw.each do |current|
-      @duration[:data] << (Bacon.where(launch_date: Time.at(0)..current).sum(:duration) / 60 / 60)
     end
 
     current_speed(number_of_days: 7)

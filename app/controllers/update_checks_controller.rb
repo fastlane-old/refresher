@@ -41,7 +41,8 @@ class UpdateChecksController < ApplicationController
       supply: "#D502BC",
       watchbuild: "#000000",
       match: "#FD972D",
-      screengrab: "#257E6D"
+      screengrab: "#257E6D",
+      spaceship: "#000000"
     }
   end
 

@@ -14,7 +14,10 @@
 
 <h4>Absolute numbers 🚀</h4>
 <ul>
-<li>Total number of <i>fastlane</i> launches: <b><%= number_with_delimiter(@cumulative.find { |a| a[:label] == "fastlane" }[:data].last) %></b></li>
+<% fl_data = @cumulative.find { |a| a[:label] == "fastlane" } %>
+<% if fl_data %>
+  <li>Total number of <i>fastlane</i> launches: <b><%= number_with_delimiter(@cumulative.find { |a| a[:label] == "fastlane" }[:data].last) %></b></li>
+<% end %>
 <li>Total number of launches of all tools: <b><%= number_with_delimiter(@cumulative.collect { |a| a[:data].last }.sum) %></b></li>
 </ul>
 

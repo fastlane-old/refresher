@@ -16,7 +16,7 @@
 <ul>
 <% fl_data = @cumulative.find { |a| a[:label] == "fastlane" } %>
 <% if fl_data %>
-  <li>Total number of <i>fastlane</i> launches: <b><%= fl_data[:data].last %></b></li>
+  <li>Total number of <i>fastlane</i> launches: <b><%= number_with_delimiter(fl_data[:data].last) %></b></li>
 <% end %>
 <li>Total number of launches of all tools: <b><%= number_with_delimiter(@cumulative.collect { |a| a[:data].last }.sum) %></b></li>
 </ul>

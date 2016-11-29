@@ -14,9 +14,11 @@ task :db do
   puts "This script is going to drop your local database #{db_name} and fetch the database from heroku #{app}. Quit now if that doesn't sound good, or press any key to continue"
   STDIN.gets
 
-  sh "heroku pg:backups capture --app #{app}"
-  sh "curl -o latest.dump `heroku pg:backups public-url --app #{app}`"
-  sh "dropdb #{db_name}"
-  sh "createdb #{db_name}"
-  sh "pg_restore --verbose --clean --no-acl --no-owner -h localhost -U #{user} -d #{db_name} latest.dump"
+  Bundler.with_clean_env do
+    sh "heroku pg:backups capture --app #{app}"
+    sh "curl -o latest.dump `heroku pg:backups public-url --app #{app}`"
+    sh "dropdb #{db_name}"
+    sh "createdb #{db_name}"
+    sh "pg_restore --verbose --clean --no-acl --no-owner -h localhost -U #{user} -d #{db_name} latest.dump"
+  end
 end

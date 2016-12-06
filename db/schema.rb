@@ -13,10 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20161206210706) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-  enable_extension "pg_stat_statements"
-
   create_table "bacons", force: :cascade do |t|
     t.string   "tool"
     t.date     "launch_date"

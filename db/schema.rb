@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(version: 20161206210706) do
     t.string   "tool"
     t.date     "launch_date"
     t.integer  "launches"
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer  "ci"
     t.integer  "duration"
     t.integer  "duration_ci"

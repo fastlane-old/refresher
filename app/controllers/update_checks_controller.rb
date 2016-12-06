@@ -169,6 +169,11 @@ class UpdateChecksController < ApplicationController
     time = params[:time].to_i
     obj.duration += time
     obj.duration_ci += time if params[:ci]
+    obj.install_method_rubygems += 1 if params[:gem]
+    obj.install_method_bundler += 1 if params[:bundler]
+    obj.install_method_standalone += 1 if params[:standalone]
+    obj.install_method_homebrew += 1 if params[:homebrew]
+
     obj.save
 
     render json: { status: :ok }

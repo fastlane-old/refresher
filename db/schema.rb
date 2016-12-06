@@ -11,17 +11,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160913011553) do
+ActiveRecord::Schema.define(version: 20161206210706) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+  enable_extension "pg_stat_statements"
 
   create_table "bacons", force: :cascade do |t|
     t.string   "tool"
     t.date     "launch_date"
     t.integer  "launches"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
     t.integer  "ci"
     t.integer  "duration"
     t.integer  "duration_ci"
+    t.integer  "install_method_standalone", default: 0
+    t.integer  "install_method_rubygems",   default: 0
+    t.integer  "install_method_bundler",    default: 0
+    t.integer  "install_method_homebrew",   default: 0
   end
 
   create_table "p_hashes", force: :cascade do |t|

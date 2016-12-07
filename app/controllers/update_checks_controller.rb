@@ -171,6 +171,7 @@ class UpdateChecksController < ApplicationController
     obj.duration_ci += time if params[:ci]
     obj.install_method_rubygems += 1 if params[:gem]
     obj.install_method_bundler += 1 if params[:bundler]
+    obj.install_method_mac_app += 1 if params[:mac_app]
     obj.install_method_standalone += 1 if params[:standalone]
     obj.install_method_homebrew += 1 if params[:homebrew]
 

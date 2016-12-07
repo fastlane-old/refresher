@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20161207145632) do
     t.integer  "duration_ci"
     t.integer  "install_method_rubygems",   default: 0
     t.integer  "install_method_bundler",    default: 0
+    t.integer  "install_method_mac_app",    default: 0
     t.integer  "install_method_standalone", default: 0
     t.integer  "install_method_homebrew",   default: 0
   end

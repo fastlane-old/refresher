@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160913011553) do
+ActiveRecord::Schema.define(version: 20161207145632) do
 
   create_table "bacons", force: :cascade do |t|
     t.string   "tool"
@@ -22,6 +22,11 @@ ActiveRecord::Schema.define(version: 20160913011553) do
     t.integer  "ci"
     t.integer  "duration"
     t.integer  "duration_ci"
+    t.integer  "install_method_rubygems",   default: 0
+    t.integer  "install_method_bundler",    default: 0
+    t.integer  "install_method_mac_app",    default: 0
+    t.integer  "install_method_standalone", default: 0
+    t.integer  "install_method_homebrew",   default: 0
   end
 
   create_table "p_hashes", force: :cascade do |t|

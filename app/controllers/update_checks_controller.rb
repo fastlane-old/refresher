@@ -235,7 +235,7 @@ class UpdateChecksController < ApplicationController
 
   private
     def geo_code
-      GeoCoder.broadcast(request.ip)
+      GeoCoder.broadcast(request.remote_ip)
     end
 
     def authenticate

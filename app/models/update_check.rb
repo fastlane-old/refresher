@@ -1,3 +1,3 @@
-class UpdateCheck < ActiveRecord::Base
+class UpdateCheck < ApplicationRecord
   serialize :data, JSON
 end

@@ -1,3 +1,3 @@
-class Bacon < ActiveRecord::Base
-  
+class Bacon < ApplicationRecord
+
 end

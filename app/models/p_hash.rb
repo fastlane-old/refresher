@@ -1,3 +1,3 @@
-class PHash < ActiveRecord::Base
-  
+class PHash < ApplicationRecord
+
 end

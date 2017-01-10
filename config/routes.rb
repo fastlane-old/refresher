@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get 'speed' => 'update_checks#current_speed'
 
   get 'duration' => 'update_checks#get_durations'
+  get 'geo' => 'application#geo'
 
   # Update information
   get ':tool_name' => 'update_checks#check_update'

@@ -34,5 +34,8 @@ module Refresher
         resource '*', :headers => :any, :methods => [:get, :options]
       end
     end
+
+    #http://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#halting-callback-chains-via-throw-abort
+    ActiveSupport.halt_callback_chains_on_return_false = false
   end
 end

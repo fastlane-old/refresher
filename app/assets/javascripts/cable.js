@@ -11,7 +11,7 @@
 
   App.cable.subscriptions.create('GeoChannel', {
     received: function(data) {
-      console.log('got', data);
+      GeoDataState.addLocation(data);
     },
   });
 

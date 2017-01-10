@@ -3,10 +3,18 @@
 //= require Tween
 //= require OrbitControls
 
-class Globe extends React.Component {
+const GeoDataState = {
+  component: null,
+  locations: [],
+  addLocation: function(data) {
+    this.locations.push(data);
+    const marker = new SpikeMarker(50);
+    this.component.addMarker(marker, data.latitude, data.longitude);
+    console.log('adding at (' + data.latitude + ', ' + data.longitude + ')');
+  }
+}
 
-  /*
-  */
+class Globe extends React.Component {
 
   static worldToScreen(vector){
     let vec = new THREE.Vector3(vector.x, vector.y, vector.z);
@@ -29,7 +37,7 @@ class Globe extends React.Component {
   }
 
   static gpsToWorld(radius, lat, lon, elevation = 0) {
-    const phi   = (90-lat)*(Math.PI/180);
+    const phi   = -(90-lat)*(Math.PI/180);
     const theta = (lon+180)*(Math.PI/180);
 
     const r = radius + (elevation / 2.0);
@@ -47,19 +55,34 @@ class Globe extends React.Component {
   constructor(props: mixed) {
     super(props);
 
-    const { renderer, scene, width, height, texturePath } = this.props;
+    const { width, height, texturePath } = this.props;
+    this.renderer = new THREE.WebGLRenderer( { antialias: true });
+    this.renderer.setPixelRatio(window.devicePixelRatio );
+    this.renderer.setSize( width, height );
+    this.renderer.setClearColor(0x112330);
+
     this.camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 1, 10000);
-
-    renderer.setPixelRatio(window.devicePixelRatio );
-    renderer.setSize( width, height );
-    renderer.setClearColor(0x112330);
-
     this.camera.position.z = width * 2;
     this.camera.position.y = height;
     this.camera.position.x = 0;
 
-    const controls = new OrbitControls(this.camera, renderer.domElement);
+    this.scene = new THREE.Scene();
+    this.scene.add(new THREE.AmbientLight( 0xffffff ));
 
+    //expose state
+    GeoDataState.component = this;
+  }
+
+  componentDidMount() {
+    const { height, texturePath } = this.props;
+    const domElement = this.renderer.domElement;
+
+    this.wrapperEl.appendChild(domElement);
+
+    const earth = new Earth(height / 2, texturePath)
+    this.scene.add(earth);
+
+    const controls = new OrbitControls(this.camera, domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;
     controls.autoRotate = true;
@@ -70,16 +93,8 @@ class Globe extends React.Component {
     controls.maxPolarAngle = 135*Math.PI/180.0;
     controls.enablePan = false;
     controls.enableKeys = false;
-    //save a reference
-    this.controls = controls;
-
-    scene.add(new THREE.AmbientLight( 0xffffff ));
-
-    const earth = new Earth(height / 2, texturePath)
-    scene.add(earth);
-    requestAnimationFrame(this.update.bind(this));
-
     controls.dollyTo(0.01);
+
     //zoom us in!
     new TWEEN.Tween({zoom: 0.01})
       .easing(TWEEN.Easing.Cubic.InOut)
@@ -89,26 +104,41 @@ class Globe extends React.Component {
       })
       .delay(500)
       .onComplete(() => {
-        earth.performIntroduction()
+        //earth.performIntroduction()
       })
       .start();
+
+    OrbitControls.update = controls.update; //stick this function on a global ref.
+    requestAnimationFrame(this.update.bind(this));
   }
 
-  componentDidMount() {
-    requestAnimationFrame(this.update.bind(this));
-    this.wrapperEl.appendChild(this.props.renderer.domElement);
+  // adds a marker to the scene.
+  addMarker(marker: Marker, lat: number, lon: number) {
+    const radius = this.props.height / 2; // since earth's radius is derived from height
+    const elevation = 0;
+    const {x,y,z} = Globe.gpsToWorld(radius, lat, lon, elevation);
+    marker.position.set(x,y,z);
+    marker.lookAt(new THREE.Vector3(0,0,0));
+    marker.rotateX(-1.5708);
+
+    this.scene.add(marker);
+
+    marker.onComplete(() => {
+      this.scene.remove(marker);
+    });
   }
 
   // THREE's render loop.
   update(timestamp) {
     TWEEN.update();
-    this.controls.update();
-    this.props.renderer.render(this.props.scene, this.camera);
+    OrbitControls.update();
+    this.renderer.render(this.scene, this.camera);
 
     requestAnimationFrame(this.update.bind(this));
   }
 
   // React's render loop
+  // this should only get called if we resize the canvas
   render() {
     const overlayStyle = {
       zIndex: 10,
@@ -125,76 +155,7 @@ class Globe extends React.Component {
         <div style={overlayStyle}>
         </div>
       </div>
-
     );
-  }
-}
-
-class Markers extends THREE.Group {
-  // this adds markers to the object's parent geometry
-  constructor(placementGeometry) {
-    super();
-
-    this.placementGeometry = placementGeometry; //what are we placing our markers on?
-    this.addMarker(new SpikeMarker(50), 35.6895, 139.6917); //Tokyo
-    this.addMarker(new SpikeMarker(10), 31.2304, 121.4737); //Shanghai
-    this.addMarker(new SpikeMarker(10), 52.5200, 13.4050); //Berlin
-    this.addMarker(new SpikeMarker(50), 51.5074, 0.1278); //London
-    this.addMarker(new SpikeMarker(20), 48.8566, -2.3522); //Paris
-    this.addMarker(new SpikeMarker(50), 40.7128, -74.0059); //NYC
-    this.addMarker(new SpikeMarker(30), 42.3601, -71.0589); //Boston
-    this.addMarker(new SpikeMarker(10), 41.8781, -87.6298); //Chicago
-    this.addMarker(new SpikeMarker(5), 25.7617, -80.1918); //Miami
-    this.addMarker(new SpikeMarker(40), 34.0522, -118.2437); //LA
-    this.addMarker(new SpikeMarker(30), 37.7749, -122.4194); //SF
-    this.addMarker(new SpikeMarker(20), 47.6062, -122.3321); //Seatle
-    this.addMarker(new SpikeMarker(20), -26.2041, 28.0473); //johanesburg
-    this.addMarker(new SpikeMarker(20), -33.8688,151.2093); //
-    this.addMarker(new SpikeMarker(15),-25.2048, -55.2708);
-    this.addMarker(new SpikeMarker(20),-23.5505, -46.6333);
-    this.addMarker(new SpikeMarker(25),23.6345, -102.5528);
-    this.addMarker(new SpikeMarker(20),19.0760,  72.8777);
-    this.addMarker(new SpikeMarker(20),1.3521, 103.8198);
-
-    const maxPoints = 2000;
-    this.loadMarkers('/answers_map.json', (data) => {
-      let pointsCount = 0;
-      for(const location of data.locations) {
-        this.addMarker(new MinorMarker(), location.lat, location.lng);
-        pointsCount+=1;
-        if(pointsCount >= maxPoints) {
-          return;
-        }
-      }
-    });
-  }
-
-  loadMarkers(url, callback) {
-    const request = new XMLHttpRequest();
-    request.open('GET', url);
-    request.onload = () => {
-      const json = JSON.parse(request.responseText);
-      callback(json);
-    }
-    request.onerror = () => console.error(request);
-    request.send();
-  }
-
-  addMarker(marker: Marker, lat: number, lon: number) {
-    this.placeOnEarth(marker, lat, lon, 1);
-    this.add(marker);
-    marker.onComplete(() => {
-      this.remove(marker);
-    });
-  }
-
-  placeOnEarth(object: THREE.Object3D, lat: number, lon: number, elevation = 0) {
-    const radius = this.placementGeometry.parameters.radius;
-
-    const {x,y,z} = Globe.gpsToWorld(radius, lat, lon, elevation);
-    object.position.set(x,y,z);
-    object.lookAt(new THREE.Vector3(0,0,0));
-    object.rotateX( -1.5708 );
   }
 }
 
@@ -449,23 +410,6 @@ class Earth extends THREE.Group {
 
     this.type = 'Earth';
 
-    /*
-    const loader = new THREE.JSONLoader();
-    loader.load('/sphere.json', function ( object ) {
-
-      object.traverse( child => {
-        if ( child instanceof THREE.Mesh ) {
-          child.scale.set(width, width, width);
-        }
-      });
-
-      const geometry = object.scale(width / 2, width / 2, width / 2);
-      const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ wireframe: true}));
-
-      scene.add( mesh );
-      }, this.onProgress, this.onError );
-    */
-
     const geometry = new THREE.SphereBufferGeometry( radius, 24, 32 );
     const mesh = new THREE.Mesh(geometry, this.constructor.earthMaterial(texturePath));
 
@@ -480,19 +424,13 @@ class Earth extends THREE.Group {
     this.rotation.order = 'ZXY';
     this.rotation.y = -180*Math.PI/180.0;
   }
-
-  // the TADA
-  performIntroduction() {
-    const earthGeo = this.children[0].geometry;
-    this.add(new Markers(earthGeo));
-  }
-
 }
 
 Globe.defaultProps = {
   width: window.innerWidth,
   height: window.innerHeight,
-  renderer: new THREE.WebGLRenderer( { antialias: true }),
-  scene: new THREE.Scene(),
-  locations: [],
-}
+};
+
+Globe.propTypes = {
+  texturePath: React.PropTypes.string.isRequired,
+};

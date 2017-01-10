@@ -1,5 +1,6 @@
 class UpdateChecksController < ApplicationController
   skip_before_action :verify_authenticity_token
+  before_filter :geo_code, only: :check_update
   before_filter :authenticate, only: [:unique, :weekly, :graphs, :stats, :current_speed]
 
   require 'open-uri'
@@ -233,6 +234,10 @@ class UpdateChecksController < ApplicationController
   end
 
   private
+    def geo_code
+      GeoCoder.broadcast('192.133.78.132') #request.ip)
+    end
+
     def authenticate
       authenticate_or_request_with_http_basic do |username, password|
         username == "admin" && password == ENV["FL_PASSWORD"]

@@ -1,4 +1,9 @@
 class GeoCoder
+  ##
+  # This class will geocode an IP address to it's lat/lon if it matches in the MaxMind city database.
+  # The location data is broadcast over a websocket to the geo visualization.
+  #
+  # No identifying data is saved.
 
   @@db = MaxMindDB.new(File.join(Rails.root,'vendor', 'assets', 'GeoLite2-City.mmdb'))
 

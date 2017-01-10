@@ -234,6 +234,8 @@ class UpdateChecksController < ApplicationController
   end
 
   private
+    ##
+    # Pass the client IP to the geo_coder for visualization purposes.
     def geo_code
       GeoCoder.broadcast(request.remote_ip)
     end

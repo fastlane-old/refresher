@@ -12,6 +12,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'turbolinks'
 gem 'uglifier', '>= 1.3.0'
 gem 'maxminddb', '~> 0.1.11'
+gem 'react-rails', '~> 1.10'
 
 group :development do
   gem 'puma'

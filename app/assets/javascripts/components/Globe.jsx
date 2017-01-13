@@ -26,7 +26,6 @@ const GeoDataState = {
         this.markers[idx] = newMarker;
       }
     }
-    console.log(this.markers);
   },
 
   markerToJoin(marker) {

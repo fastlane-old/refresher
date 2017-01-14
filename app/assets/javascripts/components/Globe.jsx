@@ -4,14 +4,57 @@
 //= require OrbitControls
 
 const GeoDataState = {
-  component: null,
-  locations: [],
-  addLocation: function(data) {
-    this.locations.push(data);
-    const marker = new SpikeMarker(50);
-    this.component.addMarker(marker, data.latitude, data.longitude);
-    console.log('adding at (' + data.latitude + ', ' + data.longitude + ')');
+  proximityThreshold: 10,
+  densityMarkerThreshold: 10,
+  globe: null,
+  markers: [],
+
+  addLocation(data) {
+    let marker = new MinorMarker(data.latitude, data.longitude);
+    let joined = this.markerToJoin(marker);
+
+    if(marker == joined) {
+      this.markers.push(marker);
+      this.globe.addMarker(marker);
+    }
+    else {
+      const count = joined.increment();
+
+      if(joined instanceof MinorMarker && count > this.densityMarkerThreshold) {
+        const newMarker = this.globe.upgradeMarker(joined, SpikeMarker);
+        const idx = this.markers.indexOf(joined);
+        this.markers[idx] = newMarker;
+      }
+    }
+  },
+
+  markerToJoin(marker) {
+    const radius = this.globe.radius;
+    const len = this.markers.length;
+    const distances = this.distances(marker, radius);
+    const closest = distances.sort((a,b) => a[0] > b[0])[0];
+
+    if(closest != undefined && closest[0] < this.proximityThreshold) {
+      return this.markers[closest[1]];
+    }
+
+    return marker;
+  },
+
+  distances(marker, radius) {
+    const d = new Array();
+    var dist = 0;
+
+    for(let i=0; i<this.markers.length; i++) {
+      dist = marker.distanceTo(this.markers[i], radius)
+      d.push([dist, i]);
+    }
+    return d;
   }
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180);
 }
 
 class Globe extends React.Component {
@@ -69,8 +112,9 @@ class Globe extends React.Component {
     this.scene = new THREE.Scene();
     this.scene.add(new THREE.AmbientLight( 0xffffff ));
 
+    this.radius = height / 2;
     //expose state
-    GeoDataState.component = this;
+    GeoDataState.globe = this;
   }
 
   componentDidMount() {
@@ -79,7 +123,7 @@ class Globe extends React.Component {
 
     this.wrapperEl.appendChild(domElement);
 
-    const earth = new Earth(height / 2, texturePath)
+    const earth = new Earth(this.radius, texturePath)
     this.scene.add(earth);
 
     const controls = new OrbitControls(this.camera, domElement);
@@ -113,10 +157,10 @@ class Globe extends React.Component {
   }
 
   // adds a marker to the scene.
-  addMarker(marker: Marker, lat: number, lon: number) {
-    const radius = this.props.height / 2; // since earth's radius is derived from height
+  addMarker(marker: Marker) {
+    const radius = this.radius;
     const elevation = 0;
-    const {x,y,z} = Globe.gpsToWorld(radius, lat, lon, elevation);
+    const {x,y,z} = Globe.gpsToWorld(radius, marker.lat, marker.lon, elevation);
     marker.position.set(x,y,z);
     marker.lookAt(new THREE.Vector3(0,0,0));
     marker.rotateX(-1.5708);
@@ -124,8 +168,19 @@ class Globe extends React.Component {
     this.scene.add(marker);
 
     marker.onComplete(() => {
-      this.scene.remove(marker);
+      this.removeMarker(marker);
     });
+  }
+
+  upgradeMarker(marker: Marker, markerClass) {
+    const newMarker = new markerClass(marker.lat, marker.lon, marker.counter)
+    this.removeMarker(marker);
+    this.addMarker(newMarker);
+    return newMarker;
+  }
+
+  removeMarker(marker: Marker) {
+    this.scene.remove(marker);
   }
 
   // THREE's render loop.
@@ -160,6 +215,36 @@ class Globe extends React.Component {
 }
 
 class Marker extends THREE.Object3D {
+  constructor(lat, lon, counter) {
+    super();
+
+    this.type = 'Marker';
+
+    this.lat = lat;
+    this.lon = lon;
+    this.counter = counter || 0;
+  }
+
+  distanceTo(marker, radius) {
+    const lat = deg2rad(marker.lat - this.lat);
+    const lon = deg2rad(marker.lon - this.lon);
+    const a =
+      Math.sin(lat/2) * Math.sin(lat/2) +
+      Math.cos(deg2rad(this.lat)) * Math.cos(deg2rad(marker.lat)) *
+      Math.sin(lon/2) * Math.sin(lon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return(radius * c);
+  }
+
+  increment() {
+    this.counter += 1;
+  }
+
+  decrement() {
+    this.counter -= 1;
+  }
+
   onComplete(callback) {
     if(this.tween) {
       this.tween.onComplete(callback);
@@ -169,10 +254,11 @@ class Marker extends THREE.Object3D {
 
 class SpikeMarker extends Marker {
   onComplete(callback) {
-    //void function. do not perform
+    //void
   }
-  constructor(magnitude = 100) {
-    super();
+
+  constructor(lat, lon, counter) {
+    super(lat, lon, counter);
 
     //TODO: make our own buffered line here:
     const geo = new THREE.CubeGeometry(10, 2, 10);
@@ -198,30 +284,48 @@ class SpikeMarker extends Marker {
 
     this.tween = new TWEEN.Tween(mesh.scale)
       .easing(TWEEN.Easing.Elastic.InOut)
-      .to({y:magnitude}, 3000)
+      .to({y: this.counter}, 3000)
       .delay(Math.random()*1000)
       .start();
+  }
+
+  increment() {
+    super.increment();
+    const mesh = this.children[0];
+    mesh.scale.y = this.counter;
+    return this.counter;
   }
 }
 
 class MinorMarker extends Marker {
-  constructor(size) {
-    super();
+  static newPoint(jitter, size) {
     if(size == undefined) {
       size = Math.random() * 20 + 5;
     }
+    jitter = jitter || 5;
+
     const geo = new THREE.Geometry();
-    geo.vertices.push( new THREE.Vector3() );
-    //const mat = new THREE.PointsMaterial({size: size, color: 0xf0ab4e, transparent: true});
-    //const mat = new THREE.PointsMaterial({size: size, color: 0x009dff, transparent: true});
-    //const mat = new THREE.PointsMaterial({size: size, color: 0x56f0ff, transparent: true});
+    geo.vertices.push( new THREE.Vector3(Math.random() * jitter, Math.random() * jitter, Math.random() * jitter) );
     const mat = new THREE.PointsMaterial({size: size, color: 0x7ae8ff, transparent: true});
     const points = new THREE.Points(geo, mat);
-    this.add(points);
-    this.tween = new TWEEN.Tween(points.material)
+
+    new TWEEN.Tween(points.material)
       .to({opacity: 0}, (Math.random() * 1000) + 1000)
       .repeat(1000)
       .start();
+
+    return points;
+  }
+
+  constructor(lat, lon, counter) {
+    super(lat, lon, counter);
+    this.add(this.constructor.newPoint());
+  }
+
+  increment() {
+    super.increment();
+    this.add(this.constructor.newPoint());
+    return this.counter;
   }
 }
 
@@ -252,7 +356,7 @@ class BeaconMarker extends Marker {
 }
 
 class NoiseMarker extends Marker {
-  constructor(radius, magnitude) {
+  constructor(radius) {
     super();
     const geo = new THREE.CircleBufferGeometry(radius, 8);
     const mat = new THREE.ShaderMaterial({

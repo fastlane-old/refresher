@@ -4,7 +4,7 @@
 //= require OrbitControls
 
 const GeoDataState = {
-  proximityThreshold: 10,
+  proximityThresholdKms: 1000,
   densityMarkerThreshold: 10,
   globe: null,
   markers: [],
@@ -29,24 +29,23 @@ const GeoDataState = {
   },
 
   markerToJoin(marker) {
-    const radius = this.globe.radius;
     const len = this.markers.length;
-    const distances = this.distances(marker, radius);
+    const distances = this.distancesKms(marker);
     const closest = distances.sort((a,b) => a[0] > b[0])[0];
 
-    if(closest != undefined && closest[0] < this.proximityThreshold) {
+    if(closest != undefined && closest[0] < this.proximityThresholdKms) {
       return this.markers[closest[1]];
     }
 
     return marker;
   },
 
-  distances(marker, radius) {
+  distancesKms(marker) {
     const d = new Array();
     var dist = 0;
 
     for(let i=0; i<this.markers.length; i++) {
-      dist = marker.distanceTo(this.markers[i], radius)
+      dist = marker.distanceToInKms(this.markers[i]);
       d.push([dist, i]);
     }
     return d;
@@ -59,7 +58,7 @@ function deg2rad(deg) {
 
 class Globe extends React.Component {
 
-  static worldToScreen(vector){
+  static worldToScreen(camera, vector){
     let vec = new THREE.Vector3(vector.x, vector.y, vector.z);
     let windowWidth = window.innerWidth;
     let minWidth = 1280;
@@ -71,7 +70,11 @@ class Globe extends React.Component {
     let widthHalf = (windowWidth/2);
     let heightHalf = (window.innerHeight/2);
 
-    vec.project(this.camera);
+    vec.project(camera);
+
+    if(vec.z > -0.4) {
+      return;
+    }
 
     const x = ( vec.x * widthHalf ) + widthHalf;
     const y = - ( vec.y * heightHalf ) + heightHalf;
@@ -91,8 +94,8 @@ class Globe extends React.Component {
     return {x, y, z};
   }
 
-  static gpsToScreen(radius, lat, lon, elevation = 0) {
-    return this.worldToScreen(this.gpsToWorld(radius, lat, lon, elevation));
+  static gpsToScreen(camera, radius, lat, lon, elevation = 0) {
+    return this.worldToScreen(camera, this.gpsToWorld(radius, lat, lon, elevation));
   }
 
   constructor(props: mixed) {
@@ -189,6 +192,17 @@ class Globe extends React.Component {
     OrbitControls.update();
     this.renderer.render(this.scene, this.camera);
 
+    /*
+    const coords = Globe.gpsToScreen(this.camera, this.radius, 40.7128, -74.0059, 200);
+    if(coords) {
+      this.rocket.style.transform = `translate(${coords.x}px, ${coords.y}px)`;
+      this.rocket.style.display = 'block';
+    }
+    else {
+      this.rocket.style.display = 'none';
+    }
+    */
+
     requestAnimationFrame(this.update.bind(this));
   }
 
@@ -208,6 +222,7 @@ class Globe extends React.Component {
     return(
       <div ref={ (element) => {this.wrapperEl = element }} className='globe' style={{position: 'relative'}}>
         <div style={overlayStyle}>
+          <div style={{position: 'relative'}} ref={(element) => {this.rocket = element }}>🚀</div>
         </div>
       </div>
     );
@@ -225,7 +240,7 @@ class Marker extends THREE.Object3D {
     this.counter = counter || 0;
   }
 
-  distanceTo(marker, radius) {
+  distance(marker) {
     const lat = deg2rad(marker.lat - this.lat);
     const lon = deg2rad(marker.lon - this.lon);
     const a =
@@ -234,7 +249,15 @@ class Marker extends THREE.Object3D {
       Math.sin(lon/2) * Math.sin(lon/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-    return(radius * c);
+    return(c);
+  }
+
+  distanceTo(marker, radius) {
+    return this.distance(marker) * radius;
+  }
+
+  distanceToInKms(marker) {
+    return this.distance(marker) * 6378.137; //earth radius in km
   }
 
   increment() {

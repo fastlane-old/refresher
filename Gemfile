@@ -13,7 +13,10 @@ gem 'turbolinks'
 gem 'uglifier', '>= 1.3.0'
 gem 'maxminddb', '~> 0.1.11'
 gem 'react-rails', '~> 1.10'
-gem 'puma'
+
+group :development do
+  gem 'puma'
+end
 
 group :development, :test do
   gem 'byebug'

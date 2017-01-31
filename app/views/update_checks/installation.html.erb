@@ -1,0 +1,28 @@
+<h1>fastlane installation methods</h1>
+(last <%= @weeks %> weeks)
+
+<canvas id="installation" style="height: 100%"></canvas>
+
+<!-- Javascript lol -->
+<script type="text/javascript">
+    var ctx = $("#installation").get(0).getContext("2d");
+    var data = {
+      labels: <%= raw(@install_methods.keys.to_json) %>,
+      datasets: [{
+        data: <%= raw(@install_methods.values.to_json) %>,
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#000080",
+          "#FF7F50"
+        ]
+      }]
+    };
+    var myLineChart = new Chart(ctx , {
+      type: 'pie',
+      data: data,
+      multiTooltipTemplate: "<\%= datasetLabel %> - <\%= value %>"
+  });
+</script>
+

@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'graphs' => 'update_checks#graphs'
   get 'graph' => 'update_checks#graphs'
   get 'weekly' => 'update_checks#weekly'
-  get 'speed' => 'update_checks#current_speed'
+  get 'installation' => 'update_checks#installation'
 
   get 'duration' => 'update_checks#get_durations'
   get 'geo' => 'application#geo'

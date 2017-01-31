@@ -233,6 +233,22 @@ class UpdateChecksController < ApplicationController
     end
   end
 
+  # Installation method stats
+  def installation
+    @weeks = (params[:weeks] || 4).to_i
+    start = Time.now - @weeks.week
+    finish = Time.now
+
+    results = Bacon.where(created_at: start..finish)
+    @install_methods = {
+      rubygems: results.sum(:install_method_rubygems),
+      bundler: results.sum(:install_method_bundler),
+      macapp: results.sum(:install_method_mac_app),
+      standalone: results.sum(:install_method_standalone),
+      homebrew: results.sum(:install_method_homebrew),
+    }
+  end
+
   private
     ##
     # Pass the client IP to the geo_coder for visualization purposes.

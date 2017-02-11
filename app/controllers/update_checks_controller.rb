@@ -43,12 +43,12 @@ class UpdateChecksController < ApplicationController
       watchbuild: "#000000",
       match: "#FD972D",
       screengrab: "#257E6D",
-      spaceship: "#000000"
+      spaceship: "#FF33AA"
     }
   end
 
   def graphs
-    show_fastlane = params[:fastlane] # as fastlane is launched far too often, it's hidden by default
+    all_tools = params[:all] # as by default we only show fastlane, as we deprecated the other gems
 
     @data = {}
     @days_raw = []
@@ -66,7 +66,7 @@ class UpdateChecksController < ApplicationController
     # Number of launches
     #
     Bacon.all.order(:launch_date).each do |bacon|
-      next if (!show_fastlane and bacon.tool == 'fastlane')
+      next if (!all_tools and bacon.tool != 'fastlane')
       next if (bacon.launch_date < start_time)
 
       @data[bacon.tool] ||= {

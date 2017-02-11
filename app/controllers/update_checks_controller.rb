@@ -209,7 +209,6 @@ class UpdateChecksController < ApplicationController
         raw: all
       }
     else
-      platform = params[:platform]
       currently_active = PHash.where(created_at: start..finish).group(:p_hash).count.keys
 
       data = {

@@ -9,10 +9,13 @@ class UpdateChecksController < ApplicationController
     tool = params[:tool_name]
     version = fetch_version(tool)
 
+    if tool_colors.keys.include?(tool.to_sym)
+      store_entry(tool, params[:p_hash], params[:platform])
+      Resque.enqueue(AnalyticIngesterLaunchedWorker, params[:p_hash], tool, params[:platform], params[:ci], Time.now.to_i)
+    end
+
     render json: { version: version,
                     status: :ok }
-
-    store_entry(tool, params[:p_hash], params[:platform]) if tool_colors.keys.include?(tool.to_sym)
   end
 
   def weekly
@@ -163,11 +166,16 @@ class UpdateChecksController < ApplicationController
   end
 
   def store_time
-    now = Time.now.to_date
+    now = Time.now
     tool = params[:tool_name]
-    obj = Bacon.where(tool: tool, launch_date: now).take
-
     time = params[:time].to_i
+
+    install_methods = [:gem, :bundler, :mac_app, :standalone, :homebrew]
+    install_method = install_methods.find { |x| params[x] == '1' }.to_s
+    Resque.enqueue(AnalyticIngesterCompletedWorker, tool, params[:ci], install_method, time, now.to_i)
+
+    obj = Bacon.where(tool: tool, launch_date: now.to_date).take
+
     obj.duration += time
     obj.duration_ci += time if params[:ci]
     obj.install_method_rubygems += 1 if params[:gem]

@@ -13,6 +13,11 @@ gem 'turbolinks'
 gem 'uglifier', '>= 1.3.0'
 gem 'maxminddb', '~> 0.1.11'
 gem 'react-rails', '~> 1.10'
+gem 'foreman'
+gem 'faraday'
+
+# background jobs using a Redis server as the queue
+gem 'resque', '~> 1.27.2'
 
 group :development do
   gem 'puma'
